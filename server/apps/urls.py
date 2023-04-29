@@ -6,9 +6,11 @@ from rest_framework.routers import DefaultRouter
 from .views import MyTokenObtainPairView
 from .views import MyTokenRefreshView
 from .views import MyTokenBlacklistView
+from .views import TweetViewSet
 from .views import UserViewSet
 
 router = DefaultRouter()
+router.register(r'tweets', TweetViewSet, basename='tweets')
 router.register(r'users', UserViewSet, basename='users')
 
 urlpatterns = [

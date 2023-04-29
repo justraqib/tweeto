@@ -10,8 +10,10 @@ from rest_framework_simplejwt.views import TokenBlacklistView
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.views import TokenRefreshView
 
+from .models import Tweet
 from .serializers import MyTokenObtainPairSerializer
 from .serializers import MyTokenRefreshSerializer
+from .serializers import TweetSerializer
 from .serializers import UserSerializer
 
 
@@ -29,7 +31,7 @@ class MyTokenObtainPairView(TokenObtainPairView):
             expires=refresh_expiry,
             secure=True,
             httponly=True,
-            samesite=None
+            samesite=None,
         )
         return response
 
@@ -48,6 +50,14 @@ class MyTokenBlacklistView(TokenBlacklistView):
         response = super().post(request, *args, **kwargs)
         response.delete_cookie(settings.JWT_COOKIE_NAME)
         return response
+
+
+class TweetViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
+    queryset = Tweet.objects.all()
+    serializer_class = TweetSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 class UserViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):

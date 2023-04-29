@@ -3,6 +3,8 @@ from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
 
+from .models import Tweet
+
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
@@ -21,6 +23,12 @@ class MyTokenRefreshSerializer(TokenRefreshSerializer):
         data = super().validate(attrs)
         data["access_expiry"] = refresh_token.access_token.payload['exp']
         return data
+
+
+class TweetSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tweet
+        fields = ['id', 'created', 'body']
 
 
 class UserSerializer(serializers.ModelSerializer):
