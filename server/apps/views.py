@@ -55,6 +55,7 @@ class MyTokenBlacklistView(TokenBlacklistView):
 class TweetViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     queryset = Tweet.objects.all()
     serializer_class = TweetSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
