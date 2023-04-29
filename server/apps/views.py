@@ -11,7 +11,7 @@ from rest_framework_simplejwt.views import TokenBlacklistView
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.views import TokenRefreshView
 
-from .filters import TweetFilter
+from .filters import TweetFilter, UserFilter
 from .models import TweetLike
 from .models import Tweet
 from .models import User
@@ -76,11 +76,15 @@ class TweetViewSet(
 
 
 class UserViewSet(
-    mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet,
 ):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     lookup_field = "username"
+    filterset_class = UserFilter
 
     @action(detail=False, permission_classes=[permissions.IsAuthenticated])
     def me(self, request, *args, **kwargs):

@@ -7,10 +7,11 @@ import { getApiBase } from "../utils/utils";
 import { GetServerSideProps } from "next";
 import { useState } from "react";
 import dayjs from "dayjs";
-import TweetTemplate, { Tweet } from "../components/tweet_template";
+import TweetTemplate, { TweetApiResponse } from "../components/tweet_template";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 interface IUserProfileProps {
-    tweetsData: Array<Tweet>,
+    tweetsData: TweetApiResponse,
     userData: User
 }
 
@@ -55,6 +56,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 export default function UserProfile({ tweetsData, userData }: IUserProfileProps) {
     const [currentUserFollowId, setCurrentUserFollowId] = useState(userData.current_user_follow_id);
+    const [nextUrl, setNextUrl] = useState(tweetsData.next);
+    const [allTweetData, setAllTweetData] = useState(tweetsData.results)
     const { getToken, user } = useAuth();
 
     const handleFollowClick = async () => {
@@ -87,6 +90,31 @@ export default function UserProfile({ tweetsData, userData }: IUserProfileProps)
             }
         }
     }
+
+    const handleLoadMore = async () => {
+        if (!nextUrl) return
+        const nextPath = nextUrl.split("/api/")[1];
+        const nextUrlFinal = `${getApiBase()}/${nextPath}`;
+        const option = getToken ? { headers: { "Authorization": `Bearer ${await getToken()}` } } : {};
+        const resp = await fetch(nextUrlFinal, option);
+        if (resp.ok) {
+            const respData = await resp.json();
+            setNextUrl(respData.next);
+            setAllTweetData([...allTweetData, ...respData.results]);
+            console.log(respData);
+        } else {
+            console.error("Unable to fetch more tweet!");
+        }
+    }
+
+    const loader = <div className="flex justify-center items-center">
+        <svg className="animate-spin -ml-1 mr-3 h-8 w-8" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <p>loading....</p>
+    </div>
+
 
     return (
         <>
@@ -130,7 +158,23 @@ export default function UserProfile({ tweetsData, userData }: IUserProfileProps)
                         </div>
                     </div>
                     <div className="w-full md:w-2/3 flex flex-col gap-4">
-                        {tweetsData.map(tweet => <TweetTemplate key={tweet.id} data={tweet} />)}
+                        <InfiniteScroll
+                            style={{ overflow: "hidden" }}
+                            dataLength={allTweetData.length}
+                            next={handleLoadMore}
+                            hasMore={nextUrl !== null}
+                            loader={loader}
+                            endMessage={
+                                <p style={{ textAlign: 'center' }}>
+                                    <b>Yay! You have seen it all</b>
+                                </p>
+                            }
+                        >
+                            {allTweetData.map(tweet => <TweetTemplate key={tweet.id} data={tweet} />)}
+                        </InfiniteScroll>
+                        {nextUrl &&
+                            <button onClick={handleLoadMore}>Load more</button>
+                        }
                     </div>
                 </main>
             }

@@ -7,7 +7,7 @@ interface FormInputProps {
     errorMessage?: string | null,
 }
 
-export default function FormInput({label, name, type="text", required=false, onChange, errorMessage}: FormInputProps) {
+export default function FormInput({ label, name, type = "text", required = false, onChange, errorMessage }: FormInputProps) {
     return (
         <>
             <label className="block text-gray-800" htmlFor={name}>{label}</label>

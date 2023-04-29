@@ -1,25 +1,26 @@
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link';
-import Router from 'next/router';
+import Router, { useRouter } from 'next/router';
 import React, { useEffect, useRef, useState } from 'react'
 import { useAuth } from '../contexts/auth';
 import { URL } from '../utils/constants';
 import Avatar from './avatar';
 
 const navigation = [
-    { name: 'Home', href: '/', current: true },
-    { name: 'Discover', href: '#', current: false },
-    { name: 'Friends', href: '#', current: false },
-    { name: 'Messages', href: '#', current: false },
+    { name: 'Home', href: '/' },
+    { name: 'Discover', href: '/discover' },
+    { name: 'Friends', href: '#' },
+    { name: 'Messages', href: '#' },
 ]
 
 const mainMenuItems = navigation.concat([
-    { name: 'Login', href: URL.LOGIN_URL, current: false },
-    { name: 'Sign Up', href: URL.REGISTER_URL, current: false },
+    { name: 'Login', href: URL.LOGIN_URL },
+    { name: 'Sign Up', href: URL.REGISTER_URL },
 ]);
 
 
 export default function Nav({ redirectOnLogout = "" }) {
+    const { pathname } = useRouter();
     const { user, logout } = useAuth();
     const userMenuRef = useRef<HTMLDivElement>(null);
     const [isMainMenuOpen, setIsMainMenuOpen] = useState(false);
@@ -70,13 +71,13 @@ export default function Nav({ redirectOnLogout = "" }) {
                                     key={item.name}
                                     href={item.href}
                                     className={
-                                        (item.current ?
+                                        (item.href === pathname ?
                                             'bg-gray-900 text-white'
                                             :
                                             'text-gray-300 hover:bg-gray-700 hover:text-white'
                                         ) + ' px-3 py-2 rounded-md text-sm font-medium'
                                     }
-                                    aria-current={item.current ? 'page' : undefined}
+                                    aria-current={item.href === pathname ? 'page' : undefined}
                                 >
                                     {item.name}
                                 </Link>
@@ -128,13 +129,13 @@ export default function Nav({ redirectOnLogout = "" }) {
                                 key={item.name}
                                 href={item.href}
                                 className={
-                                    (item.current ?
+                                    (item.href === pathname ?
                                         'bg-gray-900 text-white'
                                         :
                                         'text-gray-300 hover:bg-gray-700 hover:text-white'
                                     ) + ' block px-3 py-2 rounded-md text-sm font-medium'
                                 }
-                                aria-current={item.current ? 'page' : undefined}
+                                aria-current={item.href === pathname ? 'page' : undefined}
                             >
                                 {item.name}
                             </Link>

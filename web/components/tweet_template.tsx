@@ -1,6 +1,6 @@
 import dayjs from "dayjs"
 import Router from "next/router"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { ChatBubbleLeftIcon as ChatBubbleLeftIconSolid, HeartIcon as HeartIconSolid } from "@heroicons/react/24/solid"
 import { ChatBubbleLeftIcon as ChatBubbleLeftIconOutline, HeartIcon as HeartIconOutline } from "@heroicons/react/24/outline"
 import Avatar from "./avatar"
@@ -20,6 +20,13 @@ export interface Tweet {
     user: User
 }
 
+export interface TweetApiResponse {
+    count: number
+    previous: string | null
+    next: string | null
+    results: Array<Tweet>
+}
+
 interface ITweetTemplateProps {
     data: Tweet
     onSubmit?: (tweet: Tweet) => void
@@ -34,6 +41,15 @@ export default function TweetTemplate({ data, onSubmit, alwaysShowReplyForm = fa
     const [currentUserLikeId, setCurrentUserLikeId] = useState(data.current_user_like_id);
     const [isReplying, setIsReplying] = useState(alwaysShowReplyForm);
     const [repliesCount, setRepliesCount] = useState(data.replies_count);
+    const [tweet, setTweet] = useState(data.body);
+
+    useEffect(() => {
+        setLikesCount(data.likes_count);
+        setCurrentUserLikeId(data.current_user_like_id);
+        setIsReplying(alwaysShowReplyForm);
+        setRepliesCount(data.replies_count);
+        setTweet(data.body);
+    }, [data]);
 
     const likeTweet = async () => {
         if (!getToken) return;
@@ -86,7 +102,7 @@ export default function TweetTemplate({ data, onSubmit, alwaysShowReplyForm = fa
     }
 
     const handleTweetClick = (e: React.MouseEvent<HTMLElement>) => {
-        Router.push(URL.TWEET_URL(data.id))
+        Router.push(URL.TWEET_URL(data.id));
     }
 
     return (
@@ -96,7 +112,7 @@ export default function TweetTemplate({ data, onSubmit, alwaysShowReplyForm = fa
                 <Link href={URL.PROFILE_URL(data.user.username)}>
                     <Avatar user={data.user} className="inline h-14 w-14 rounded-full hover:ring-1" />
                 </Link>
-                <div className="ml-3 in">
+                <div className="ml-3">
                     <Link href={URL.PROFILE_URL(data.user.username)}>
                         <h1 className="font-bold hover:text-gray-600">
                             {data.user.name}
