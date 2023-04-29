@@ -1,8 +1,14 @@
 import React, { useState } from "react";
 import { useAuth } from "../contexts/auth";
-import { getApiBase } from "../utils/utils"
+import { getApiBase } from "../utils/utils";
+import { Tweet } from "./tweet";
 
-export default function NewTweetForm() {
+interface INewTweetFormProps {
+    onSubmit: (tweet: Tweet) => void
+}
+
+
+export default function NewTweetForm({ onSubmit }: INewTweetFormProps) {
     const { getToken } = useAuth();
     const [tweetBody, setTweetBody] = useState("");
 
@@ -22,8 +28,10 @@ export default function NewTweetForm() {
                 "Authorization": `Bearer ${token}`,
             },
         });
-        if ( resp.ok ) {
+        if (resp.ok) {
             (e.target as HTMLFormElement).reset();
+            const tweetData = await resp.json();
+            onSubmit(tweetData);
         } else {
             alert("Unable to tweet");
         }

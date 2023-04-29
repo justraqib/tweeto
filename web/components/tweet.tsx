@@ -1,24 +1,12 @@
 import Avatar from "./avatar"
 import dayjs from "dayjs"
+import { User } from "../contexts/auth"
 
 export interface Tweet {
-    id: number,
-    created: string,
-    body: string,
-    user: {
-        id: number,
-        name: string,
-        email: string,
-        about: string,
-        location: string,
-        timezone: string,
-        avatar_url: null,
-        date_joined: string,
-        username: string,
-        followers_count: number,
-        following_count: number,
-        current_user_follow_id: number,
-    }
+    id: number
+    created: string
+    body: string
+    user: User
 }
 
 interface ITweetTemplateProps {

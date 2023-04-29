@@ -1,4 +1,5 @@
 import { GetServerSideProps } from 'next';
+import { useState } from 'react';
 import MyHead from '../components/head';
 import Nav from '../components/nav';
 import NewTweetForm from '../components/new_tweet_form';
@@ -47,6 +48,12 @@ interface IHomeProps {
 }
 
 export default function Home({ user, tweetsList }: IHomeProps) {
+  const [allTweetsList, setAllTweetsList] = useState(tweetsList);
+
+  const handleNewTweet = (tweet: Tweet) => {
+    setAllTweetsList([tweet, ...allTweetsList]);
+  }
+
   return (
     <>
       <MyHead title='Homepage' />
@@ -56,11 +63,11 @@ export default function Home({ user, tweetsList }: IHomeProps) {
         {user ?
           <>
             <div className="w-full md:w-1/3">
-              <NewTweetForm />
+              <NewTweetForm onSubmit={handleNewTweet} />
             </div>
             <div className="w-full md:w-2/3 flex flex-col gap-4">
 
-              {tweetsList.map(tweet => <TweetTemplate data={tweet} />)}
+              {allTweetsList.map(tweet => <TweetTemplate data={tweet} />)}
             </div>
           </>
           :
