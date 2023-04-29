@@ -1,4 +1,4 @@
-import Head from 'next/head'
+import MyHead from '../components/head';
 import Nav from '../components/nav';
 import NewTweetForm from '../components/new_tweet_form';
 import { useAuth } from '../utils/auth';
@@ -8,11 +8,7 @@ export default function Home() {
 
   return (
     <>
-      <Head>
-        <title>Homepage</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.svg" />
-      </Head>
+      <MyHead title='Homepage' />
 
       <Nav />
       <main>

@@ -3,6 +3,7 @@ import { useRouter } from "next/router"
 import { useEffect, useState } from "react";
 import Avatar from "../components/avatar";
 import Nav from "../components/nav";
+import MyHead from "../components/head";
 import { User } from "../utils/auth";
 import { API_BASE } from "../utils/config";
 
@@ -21,7 +22,7 @@ export default function UserProfile() {
 
     const getMonthYear = (date: string): string => {
         const d = new Date(date);
-        return d.toLocaleDateString('en-US', {year:"numeric", month:"long"});;
+        return d.toLocaleDateString('en-US', { year: "numeric", month: "long" });;
     }
 
     useEffect(() => {
@@ -30,6 +31,7 @@ export default function UserProfile() {
 
     return (
         <>
+            <MyHead title={`${username}'s profile`}/>
             <Nav />
             {
                 userData &&

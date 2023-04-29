@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import Head from 'next/head'
 import FormInput from '../components/form_input';
 import { useAuth } from '../utils/auth';
 import Router from 'next/router';
+import MyHead from '../components/head';
 
 interface IFormData {
     username?: string,
@@ -54,11 +54,7 @@ export default function Register() {
 
     return (
         <>
-            <Head>
-                <title>Login</title>
-                <meta name="viewport" content="width=device-width, initial-scale=1" />
-                <link rel="icon" href="/favicon.svg" />
-            </Head>
+            <MyHead title="Login" />
 
             <form method="POST" onSubmit={handleSubmit}>
                 <FormInput label="Username" name="username" required={true} onChange={updateFormData} errorMessage={getErrorMessage('username')} />
