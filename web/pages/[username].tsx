@@ -1,37 +1,46 @@
 import { MapPinIcon, CalendarDaysIcon } from "@heroicons/react/24/outline";
-import { useRouter } from "next/router"
-import { useEffect, useState } from "react";
 import Avatar from "../components/avatar";
 import Nav from "../components/nav";
 import MyHead from "../components/head";
-import { User } from "../utils/auth";
-import { API_BASE } from "../utils/config";
+import { User } from "../contexts/auth";
+import { getApiBase } from "../utils/utils";
+import { GetServerSideProps } from "next";
 
-export default function UserProfile() {
-    const router = useRouter()
-    const { username } = router.query
-    const [userData, setUserData] = useState<User | null>(null)
+interface IUserProfileProps {
+    userData: User
+}
 
-    const fetchUserDetails = async () => {
-        const resp = await fetch(`${API_BASE}/users/${username}/`);
-        if (resp.ok) {
-            const data = await resp.json();
-            setUserData(data);
+export const getServerSideProps: GetServerSideProps = async (context) => {
+    const { username } = context.query;
+    const resp = await fetch(`${getApiBase()}/users/${username}/`);
+
+    if (resp.ok) {
+        return {
+            props: {
+                userData: await resp.json()
+            },
         }
     }
 
+    if (resp.status === 404) {
+        return {
+            notFound: true,
+        }
+    }
+
+    throw new Error('Internal Server Error');
+}
+
+
+export default function UserProfile({ userData }: IUserProfileProps) {
     const getMonthYear = (date: string): string => {
         const d = new Date(date);
         return d.toLocaleDateString('en-US', { year: "numeric", month: "long" });;
     }
 
-    useEffect(() => {
-        username && fetchUserDetails();
-    }, [username]);
-
     return (
         <>
-            <MyHead title={`${username}'s profile`}/>
+            <MyHead title={`${userData.username}'s profile`} />
             <Nav />
             {
                 userData &&

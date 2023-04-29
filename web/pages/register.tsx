@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { API_BASE } from '../utils/config';
+import { getApiBase } from '../utils/utils';
 import FormInput from '../components/form_input';
-import { useAuth } from '../utils/auth';
+import { useAuth } from '../contexts/auth';
 import Router from 'next/router';
 import MyHead from '../components/head';
 
@@ -43,7 +43,7 @@ export default function Register() {
         setLoading(true);
         e.preventDefault();
 
-        const resp = await fetch(`${API_BASE}/users/`, {
+        const resp = await fetch(`${getApiBase()}/users/`, {
             method: 'POST',
             body: JSON.stringify(formData),
             headers: { "Content-Type": 'application/json' },

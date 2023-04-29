@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { useAuth } from "../utils/auth";
-import { API_BASE } from "../utils/config"
+import { useAuth } from "../contexts/auth";
+import { getApiBase } from "../utils/utils"
 
 export default function NewTweetForm() {
     const { getToken } = useAuth();
@@ -14,7 +14,7 @@ export default function NewTweetForm() {
         }
 
         const token = await getToken();
-        const resp = await fetch(`${API_BASE}/tweets/`, {
+        const resp = await fetch(`${getApiBase()}/tweets/`, {
             method: 'POST',
             body: JSON.stringify({ body: tweetBody }),
             headers: {

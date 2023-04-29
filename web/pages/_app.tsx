@@ -1,6 +1,6 @@
 import '../styles/globals.css'
 import type { AppProps } from 'next/app'
-import { AuthProvider } from '../utils/auth';
+import { AuthProvider } from '../contexts/auth';
 import { Inter } from '@next/font/google';
 
 const inter = Inter({

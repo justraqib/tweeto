@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { API_BASE } from "./config";
+import { getApiBase } from "../utils/utils";
 
 export interface User {
     id: number;
@@ -31,6 +31,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const [user, setUser] = useState<User | null>(null);
     const [accessToken, setAccessToken] = useState("");
     const [accessTokenExpiry, setAccessTokenExpiry] = useState<number | null>(null);
+    const API_BASE = getApiBase();
 
     const initAuth = async () => {
         if (!accessTokenIsValid()) {

@@ -7,7 +7,7 @@ interface IMyHeadProps {
 export default function MyHead({ title }: IMyHeadProps) {
     return (
         <Head>
-            <title>{title}</title>
+            <title>{`${title} - Twitter`}</title>
             <meta name="viewport" content="width=device-width, initial-scale=1" />
             <link rel="icon" href="/favicon.svg" />
         </Head>

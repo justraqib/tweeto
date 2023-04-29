@@ -1,4 +1,4 @@
-import { User } from "../utils/auth";
+import { User } from "../contexts/auth";
 
 interface IAvatarProps {
     user: User,

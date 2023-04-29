@@ -1,11 +1,11 @@
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link';
 import React, { useEffect, useRef, useState } from 'react'
-import { useAuth } from '../utils/auth';
+import { useAuth } from '../contexts/auth';
 import Avatar from './avatar';
 
 const navigation = [
-    { name: 'Home', href: '#', current: true },
+    { name: 'Home', href: '/', current: true },
     { name: 'Discover', href: '#', current: false },
     { name: 'Friends', href: '#', current: false },
     { name: 'Messages', href: '#', current: false },

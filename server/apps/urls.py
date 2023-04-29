@@ -14,8 +14,8 @@ router.register(r'tweets', TweetViewSet, basename='tweets')
 router.register(r'users', UserViewSet, basename='users')
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api-auth/', include('rest_framework.urls')),
+    path('api/admin/', admin.site.urls),
+    path('api/auth/', include('rest_framework.urls')),
     path('api/token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', MyTokenRefreshView.as_view(), name='token_refresh'),
     path('api/token/logout/', MyTokenBlacklistView.as_view(), name='token_blacklist'),

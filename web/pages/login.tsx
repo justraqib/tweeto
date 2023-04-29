@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import FormInput from '../components/form_input';
-import { useAuth } from '../utils/auth';
+import { useAuth } from '../contexts/auth';
 import Router from 'next/router';
 import MyHead from '../components/head';
 
