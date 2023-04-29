@@ -1,12 +1,18 @@
 import datetime
 from django.conf import settings
 
-from rest_framework.decorators import api_view
+from rest_framework import mixins
+from rest_framework import permissions
+from rest_framework import viewsets
+from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework import status
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenBlacklistView
+from rest_framework_simplejwt.views import TokenBlacklistView
+from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.views import TokenRefreshView
 
-from .serializers import MyTokenObtainPairSerializer, MyTokenRefreshSerializer
+from .serializers import MyTokenObtainPairSerializer
+from .serializers import MyTokenRefreshSerializer
+from .serializers import UserSerializer
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
@@ -44,17 +50,11 @@ class MyTokenBlacklistView(TokenBlacklistView):
         return response
 
 
-@api_view(['GET'])
-def current_user_details(request):
-    user = request.user
-    if user.is_authenticated:
-        return Response({
-            "id": user.id,
-            "username": user.username,
-            "name": user.get_full_name(),
-            "email": user.email,
-        })
-    return Response(
-        {"error": "Unauthenticated!"},
-        status=status.HTTP_401_UNAUTHORIZED
-    )
+class UserViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
+    serializer_class = UserSerializer
+
+    @action(detail=False, permission_classes=[permissions.IsAuthenticated])
+    def me(self, request, *args, **kwargs):
+        user = request.user
+        serializer = self.get_serializer(user)
+        return Response(serializer.data)
