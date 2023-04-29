@@ -7,8 +7,10 @@ import { getApiBase } from "../utils/utils";
 import { GetServerSideProps } from "next";
 import { useState } from "react";
 import dayjs from "dayjs";
+import TweetTemplate, { Tweet } from "../components/tweet";
 
 interface IUserProfileProps {
+    tweetsData: Array<Tweet>,
     userData: User
 }
 
@@ -28,17 +30,19 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
 
     const headers = accessToken ? { "Authorization": `Bearer ${accessToken}` } : undefined;
-    const resp = await fetch(`${getApiBase()}/users/${username}/`, { headers: headers });
+    const userDataResp = await fetch(`${getApiBase()}/users/${username}/`, { headers: headers });
+    const tweetsDataResp = await fetch(`${getApiBase()}/tweets/?user__username=${username}&order_by=-created`);
 
-    if (resp.ok) {
+    if (userDataResp.ok && tweetsDataResp.ok) {
         return {
             props: {
-                userData: await resp.json()
+                tweetsData: await tweetsDataResp.json(),
+                userData: await userDataResp.json()
             },
         }
     }
 
-    if (resp.status === 404) {
+    if (userDataResp.status === 404 || tweetsDataResp.status === 404) {
         return {
             notFound: true,
         }
@@ -48,7 +52,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 }
 
 
-export default function UserProfile({ userData }: IUserProfileProps) {
+
+export default function UserProfile({ tweetsData, userData }: IUserProfileProps) {
     const [currentUserFollowId, setCurrentUserFollowId] = useState(userData.current_user_follow_id);
     const { getToken, user } = useAuth();
 
@@ -109,7 +114,7 @@ export default function UserProfile({ userData }: IUserProfileProps) {
                                 </span>
                                 <span className="flex items-center gap-1">
                                     <CalendarDaysIcon className="h-5 w-5" />
-                                    <span>Joined { dayjs(userData.date_joined).tz(user?.timezone || 'UTC').format('MMMM YYYY') }</span>
+                                    <span>Joined {dayjs(userData.date_joined).tz(user?.timezone || 'UTC').format('MMMM YYYY')}</span>
                                 </span>
                             </div>
                             <div className="flex gap-3 mt-4">
@@ -124,7 +129,8 @@ export default function UserProfile({ userData }: IUserProfileProps) {
                             </div>
                         </div>
                     </div>
-                    <div className="w-full md:w-2/3">
+                    <div className="w-full md:w-2/3 flex flex-col gap-4">
+                        {tweetsData.map(tweet => <TweetTemplate data={tweet} />)}
                     </div>
                 </main>
             }

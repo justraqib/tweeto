@@ -29,12 +29,6 @@ class MyTokenRefreshSerializer(TokenRefreshSerializer):
         return data
 
 
-class TweetSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Tweet
-        fields = ["id", "created", "body"]
-
-
 class UserSerializer(serializers.ModelSerializer):
     name = serializers.ReadOnlyField(source="get_full_name")
     followers_count = serializers.ReadOnlyField(source="get_followers_count")
@@ -81,6 +75,14 @@ class UserSerializer(serializers.ModelSerializer):
         if "password" in validated_data:
             validated_data["password"] = make_password(validated_data["password"])
         return super().update(instance, validated_data)
+
+
+class TweetSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+
+    class Meta:
+        model = Tweet
+        fields = ["id", "created", "body", "user"]
 
 
 class UserFollowSerializer(serializers.ModelSerializer):

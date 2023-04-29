@@ -10,6 +10,7 @@ from rest_framework_simplejwt.views import TokenBlacklistView
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.views import TokenRefreshView
 
+from .filters import TweetFilter
 from .models import Tweet
 from .models import User
 from .models import UserFollow
@@ -55,10 +56,13 @@ class MyTokenBlacklistView(TokenBlacklistView):
         return response
 
 
-class TweetViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
+class TweetViewSet(
+    mixins.CreateModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet
+):
     queryset = Tweet.objects.all()
     serializer_class = TweetSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    filterset_class = TweetFilter
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
