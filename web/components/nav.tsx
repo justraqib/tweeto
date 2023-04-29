@@ -1,7 +1,9 @@
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link';
+import Router from 'next/router';
 import React, { useEffect, useRef, useState } from 'react'
 import { useAuth } from '../contexts/auth';
+import { URL } from '../utils/constants';
 import Avatar from './avatar';
 
 const navigation = [
@@ -12,12 +14,12 @@ const navigation = [
 ]
 
 const mainMenuItems = navigation.concat([
-    { name: 'Login', href: '/login', current: false },
-    { name: 'Sign Up', href: '/register', current: false },
+    { name: 'Login', href: URL.LOGIN_URL, current: false },
+    { name: 'Sign Up', href: URL.REGISTER_URL, current: false },
 ]);
 
 
-export default function Nav() {
+export default function Nav({ redirectOnLogout = "" }) {
     const { user, logout } = useAuth();
     const userMenuRef = useRef<HTMLDivElement>(null);
     const [isMainMenuOpen, setIsMainMenuOpen] = useState(false);
@@ -40,6 +42,7 @@ export default function Nav() {
         e.preventDefault();
         if (logout) logout();
         setIsUserMenuOpen(false);
+        if (redirectOnLogout) Router.push(redirectOnLogout);
     };
 
     return (
@@ -109,8 +112,8 @@ export default function Nav() {
                     {
                         !user &&
                         <div className='flex flex-row items-center'>
-                            <Link href="/login" className='hidden sm:inline text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-semibold'>Login</Link>
-                            <Link href="/register" className='hidden sm:inline ml-3 bg-purple-600 text-gray-300 hover:bg-purple-700 hover:text-white px-3 py-2 rounded-md text-sm font-semibold'>Sign Up</Link>
+                            <Link href={URL.LOGIN_URL} className='hidden sm:inline text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-semibold'>Login</Link>
+                            <Link href={URL.REGISTER_URL} className='hidden sm:inline ml-3 bg-purple-600 text-gray-300 hover:bg-purple-700 hover:text-white px-3 py-2 rounded-md text-sm font-semibold'>Sign Up</Link>
                         </div>
                     }
                 </div>

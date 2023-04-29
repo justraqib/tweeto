@@ -5,14 +5,15 @@ import Nav from '../components/nav';
 import NewTweetForm from '../components/new_tweet_form';
 import TweetTemplate, { Tweet } from '../components/tweet';
 import { User } from '../contexts/auth';
+import { URL } from '../utils/constants';
 import { getApiBase } from '../utils/utils';
 
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const anonymousUserProps = {
-    props: {
-      user: null,
-      tweetsList: [],
+    redirect: {
+      permanent: false,
+      destination: URL.REGISTER_URL,
     }
   }
 
@@ -43,11 +44,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 }
 
 interface IHomeProps {
-  user: User
   tweetsList: Array<Tweet>
 }
 
-export default function Home({ user, tweetsList }: IHomeProps) {
+export default function Home({ tweetsList }: IHomeProps) {
   const [allTweetsList, setAllTweetsList] = useState(tweetsList);
 
   const handleNewTweet = (tweet: Tweet) => {
@@ -58,21 +58,14 @@ export default function Home({ user, tweetsList }: IHomeProps) {
     <>
       <MyHead title='Homepage' />
 
-      <Nav />
+      <Nav redirectOnLogout={URL.LOGIN_URL} />
       <main className="flex flex-col md:flex-row gap-4 mx-auto max-w-7xl my-4 px-2 sm:px-6 lg:px-8">
-        {user ?
-          <>
-            <div className="w-full md:w-1/3">
-              <NewTweetForm onSubmit={handleNewTweet} />
-            </div>
-            <div className="w-full md:w-2/3 flex flex-col gap-4">
-
-              {allTweetsList.map(tweet => <TweetTemplate data={tweet} />)}
-            </div>
-          </>
-          :
-          `I don't know you. Please login :(`
-        }
+        <div className="w-full md:w-1/3">
+          <NewTweetForm onSubmit={handleNewTweet} />
+        </div>
+        <div className="w-full md:w-2/3 flex flex-col gap-4">
+          {allTweetsList.map(tweet => <TweetTemplate data={tweet} />)}
+        </div>
       </main>
     </>
   )
