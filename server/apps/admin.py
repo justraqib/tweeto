@@ -3,7 +3,7 @@ from django.contrib.auth.admin import UserAdmin
 
 from .models import Tweet
 from .models import User
-from .models import UserFollows
+from .models import UserFollow
 
 
 class CustomUserAdmin(UserAdmin):
@@ -55,4 +55,4 @@ class TweetAdmin(admin.ModelAdmin):
 
 admin.site.register(Tweet, TweetAdmin)
 admin.site.register(User, CustomUserAdmin)
-admin.site.register(UserFollows)
+admin.site.register(UserFollow)

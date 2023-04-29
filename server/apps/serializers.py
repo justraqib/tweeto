@@ -7,6 +7,7 @@ from rest_framework_simplejwt.serializers import (
 
 from .models import Tweet
 from .models import User
+from .models import UserFollow
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -70,3 +71,9 @@ class UserSerializer(serializers.ModelSerializer):
         if "password" in validated_data:
             validated_data["password"] = make_password(validated_data["password"])
         return super().update(instance, validated_data)
+
+
+class UserFollowSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserFollow
+        fields = ["id", "user", "follows"]

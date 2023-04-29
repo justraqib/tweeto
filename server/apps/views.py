@@ -12,10 +12,12 @@ from rest_framework_simplejwt.views import TokenRefreshView
 
 from .models import Tweet
 from .models import User
+from .models import UserFollow
 from .serializers import MyTokenObtainPairSerializer
 from .serializers import MyTokenRefreshSerializer
 from .serializers import TweetSerializer
 from .serializers import UserSerializer
+from .serializers import UserFollowSerializer
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
@@ -62,13 +64,25 @@ class TweetViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         serializer.save(user=self.request.user)
 
 
-class UserViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+class UserViewSet(
+    mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet
+):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    lookup_field = 'username'
+    lookup_field = "username"
 
     @action(detail=False, permission_classes=[permissions.IsAuthenticated])
     def me(self, request, *args, **kwargs):
         user = request.user
         serializer = self.get_serializer(user)
         return Response(serializer.data)
+
+
+class UserFollowViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
+    queryset = UserFollow.objects.all()
+    serializer_class = UserFollowSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def create(self, request, *args, **kwargs):
+        request.data["user"] = request.user.pk
+        return super().create(request, *args, **kwargs)

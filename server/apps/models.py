@@ -8,7 +8,7 @@ class User(AbstractUser):
     location = models.CharField(max_length=128, default="", blank=True)
     following = models.ManyToManyField(
         "self",
-        through="UserFollows",
+        through="UserFollow",
         through_fields=("user", "follows"),
     )
 
@@ -16,21 +16,30 @@ class User(AbstractUser):
         return self.username
 
     def get_followers_count(self):
-        return UserFollows.objects.filter(follows=self).count()
+        return UserFollow.objects.filter(follows=self).count() - 1
 
     def get_following_count(self):
-        return UserFollows.objects.filter(user=self).count()
+        return UserFollow.objects.filter(user=self).count() - 1
+
+    def save(self, *args, **kwargs):
+        is_created = self.id is None
+        result = super().save(*args, **kwargs)
+        if is_created:
+            UserFollow.objects.create(user=self, follows=self)
+        return result
 
 
-class UserFollows(models.Model):
+class UserFollow(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    follows = models.ForeignKey(User, related_name="followed_by", on_delete=models.CASCADE)
+    follows = models.ForeignKey(
+        User, related_name="followed_by", on_delete=models.CASCADE
+    )
 
     def __str__(self) -> str:
-        return f"{self.__class__.__name__}: {self.user} --> {self.follows}"
+        return f"<{self.__class__.__name__}: {self.user} follows {self.follows}>"
 
     class Meta:
-        verbose_name_plural = "user follows"
+        unique_together = (("user", "follows"),)
 
 
 class Tweet(models.Model):
