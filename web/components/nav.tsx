@@ -1,4 +1,5 @@
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import Link from 'next/link';
 import React, { useEffect, useRef, useState } from 'react'
 import { useAuth } from '../utils/auth';
 
@@ -11,7 +12,7 @@ const navigation = [
 
 
 export default function Nav() {
-    const { logout } = useAuth();
+    const { user, logout } = useAuth();
     const userMenuRef = useRef<HTMLDivElement>(null);
     const [isMainMenuOpen, setIsMainMenuOpen] = useState(false);
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
@@ -32,6 +33,7 @@ export default function Nav() {
     const initLogout = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
         if (logout) logout();
+        setIsUserMenuOpen(false);
     };
 
     return (
@@ -73,31 +75,42 @@ export default function Nav() {
                         </div>
                     </div>
 
-                    <div className="flex flex-row items-center">
-                        <button
-                            type="button"
-                            className="rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                            <span className="sr-only">View notifications</span>
-                            <BellIcon className="h-6 w-6" aria-hidden="true" />
-                        </button>
-                        <div ref={userMenuRef} className='relative ml-3'>
-                            <button className="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}>
-                                <span className="sr-only">Open user menu</span>
-                                <img
-                                    className="h-8 w-8 rounded-full"
-                                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                                    alt="avatar"
-                                />
+                    {
+                        user &&
+                        <div className="flex flex-row items-center">
+                            <button
+                                type="button"
+                                className="rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                                <span className="sr-only">View notifications</span>
+                                <BellIcon className="h-6 w-6" aria-hidden="true" />
                             </button>
-                            {isUserMenuOpen &&
-                                <div className="absolute right-0 top-full z-10 mt-2 w-48 rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button">
-                                    <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Your Profile</a>
-                                    <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Settings</a>
-                                    <a href="#" onClick={initLogout} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Sign out</a>
-                                </div>
-                            }
+                            <div ref={userMenuRef} className='relative ml-3'>
+                                <button className="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}>
+                                    <span className="sr-only">Open user menu</span>
+                                    <img
+                                        className="h-8 w-8 rounded-full"
+                                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                                        alt="avatar"
+                                    />
+                                </button>
+                                {isUserMenuOpen &&
+                                    <div className="absolute right-0 top-full z-10 mt-2 w-48 rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button">
+                                        <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Your Profile</a>
+                                        <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Settings</a>
+                                        <a href="#" onClick={initLogout} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Sign out</a>
+                                    </div>
+                                }
+                            </div>
                         </div>
-                    </div>
+                    }
+
+                    {
+                        !user &&
+                        <div className='flex flex-row items-center'>
+                            <Link href="/login" className='text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-semibold'>Login</Link>
+                            <Link href="/register" className='ml-3 bg-purple-600 text-gray-300 hover:bg-purple-700 hover:text-white px-3 py-2 rounded-md text-sm font-semibold'>Sign Up</Link>
+                        </div>
+                    }
                 </div>
             </div>
 
