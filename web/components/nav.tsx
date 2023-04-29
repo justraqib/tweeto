@@ -11,6 +11,11 @@ const navigation = [
     { name: 'Messages', href: '#', current: false },
 ]
 
+const mainMenuItems = navigation.concat([
+    { name: 'Login', href: '/login', current: false },
+    { name: 'Sign Up', href: '/register', current: false },
+]);
+
 
 export default function Nav() {
     const { user, logout } = useAuth();
@@ -53,12 +58,12 @@ export default function Nav() {
                     </div>
 
                     <div className="flex flex-row items-center">
-                        <div className='mr-3'>
+                        <div className='mr-10 sm:mr-3'>
                             <img className="block h-8 w-auto" src="/logo.svg" alt="twitter" />
                         </div>
                         <div className="hidden sm:flex p-1">
                             {navigation.map((item) => (
-                                <a
+                                <Link
                                     key={item.name}
                                     href={item.href}
                                     className={
@@ -71,7 +76,7 @@ export default function Nav() {
                                     aria-current={item.current ? 'page' : undefined}
                                 >
                                     {item.name}
-                                </a>
+                                </Link>
                             ))}
                         </div>
                     </div>
@@ -104,8 +109,8 @@ export default function Nav() {
                     {
                         !user &&
                         <div className='flex flex-row items-center'>
-                            <Link href="/login" className='text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-semibold'>Login</Link>
-                            <Link href="/register" className='ml-3 bg-purple-600 text-gray-300 hover:bg-purple-700 hover:text-white px-3 py-2 rounded-md text-sm font-semibold'>Sign Up</Link>
+                            <Link href="/login" className='hidden sm:inline text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-semibold'>Login</Link>
+                            <Link href="/register" className='hidden sm:inline ml-3 bg-purple-600 text-gray-300 hover:bg-purple-700 hover:text-white px-3 py-2 rounded-md text-sm font-semibold'>Sign Up</Link>
                         </div>
                     }
                 </div>
@@ -115,8 +120,8 @@ export default function Nav() {
                 isMainMenuOpen &&
                 <div className="sm:hidden" x-show="open">
                     <div className="space-y-1 px-2 pt-2 pb-3">
-                        {navigation.map((item) => (
-                            <a
+                        {mainMenuItems.map((item) => (
+                            <Link
                                 key={item.name}
                                 href={item.href}
                                 className={
@@ -129,7 +134,7 @@ export default function Nav() {
                                 aria-current={item.current ? 'page' : undefined}
                             >
                                 {item.name}
-                            </a>
+                            </Link>
                         ))}
                     </div>
                 </div>
