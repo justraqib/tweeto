@@ -7,7 +7,7 @@ import { getApiBase } from "../utils/utils";
 import { GetServerSideProps } from "next";
 import { useState } from "react";
 import dayjs from "dayjs";
-import TweetTemplate, { Tweet } from "../components/tweet";
+import TweetTemplate, { Tweet } from "../components/tweet_template";
 
 interface IUserProfileProps {
     tweetsData: Array<Tweet>,
@@ -31,7 +31,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     const headers = accessToken ? { "Authorization": `Bearer ${accessToken}` } : undefined;
     const userDataResp = await fetch(`${getApiBase()}/users/${username}/`, { headers: headers });
-    const tweetsDataResp = await fetch(`${getApiBase()}/tweets/?user__username=${username}&order_by=-created`);
+    const tweetsDataResp = await fetch(`${getApiBase()}/tweets/?parent__isnull=true&user__username=${username}&order_by=-created`, { headers: headers });
 
     if (userDataResp.ok && tweetsDataResp.ok) {
         return {
@@ -130,7 +130,7 @@ export default function UserProfile({ tweetsData, userData }: IUserProfileProps)
                         </div>
                     </div>
                     <div className="w-full md:w-2/3 flex flex-col gap-4">
-                        {tweetsData.map(tweet => <TweetTemplate data={tweet} />)}
+                        {tweetsData.map(tweet => <TweetTemplate key={tweet.id} data={tweet} />)}
                     </div>
                 </main>
             }

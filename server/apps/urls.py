@@ -7,11 +7,13 @@ from .views import MyTokenObtainPairView
 from .views import MyTokenRefreshView
 from .views import MyTokenBlacklistView
 from .views import TweetViewSet
+from .views import TweetLikeViewSet
 from .views import UserViewSet
 from .views import UserFollowViewSet
 
 router = DefaultRouter()
 router.register(r"tweets", TweetViewSet, basename="tweets")
+router.register(r"tweet-likes", TweetLikeViewSet, basename="tweet_likes")
 router.register(r"users", UserViewSet, basename="users")
 router.register(r"user-follows", UserFollowViewSet, basename="user_follows")
 

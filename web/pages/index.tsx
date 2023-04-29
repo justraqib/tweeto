@@ -3,8 +3,7 @@ import { useState } from 'react';
 import MyHead from '../components/head';
 import Nav from '../components/nav';
 import NewTweetForm from '../components/new_tweet_form';
-import TweetTemplate, { Tweet } from '../components/tweet';
-import { User } from '../contexts/auth';
+import TweetTemplate, { Tweet } from '../components/tweet_template';
 import { URL } from '../utils/constants';
 import { getApiBase } from '../utils/utils';
 
@@ -30,7 +29,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   if (!userDataResp.ok) return anonymousUserProps;
 
   const userData = await userDataResp.json();
-  const resp = await fetch(`${getApiBase()}/tweets/?user__followed_by__user__username=${userData.username}&order_by=-created`);
+  const resp = await fetch(`${getApiBase()}/tweets/?parent__isnull=true&user__followed_by__user__username=${userData.username}&order_by=-created`, { headers: { "Authorization": `Bearer ${access}` } });
   if (resp.ok) {
     return {
       props: {
@@ -39,7 +38,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
     }
   }
-
   throw new Error('Internal Server Error');
 }
 
@@ -64,7 +62,7 @@ export default function Home({ tweetsList }: IHomeProps) {
           <NewTweetForm onSubmit={handleNewTweet} />
         </div>
         <div className="w-full md:w-2/3 flex flex-col gap-4">
-          {allTweetsList.map(tweet => <TweetTemplate data={tweet} />)}
+          {allTweetsList.map(tweet => <TweetTemplate key={tweet.id} data={tweet} />)}
         </div>
       </main>
     </>

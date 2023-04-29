@@ -51,6 +51,25 @@ class Tweet(models.Model):
     created = models.DateTimeField(auto_now=True)
     body = models.CharField(max_length=260, blank=False)
     user = models.ForeignKey(User, related_name="tweets", on_delete=models.CASCADE)
+    likes = models.ManyToManyField(
+        User, through="TweetLike", related_name="liked_tweets"
+    )
+    parent = models.ForeignKey("self", related_name="replies", on_delete=models.CASCADE, blank=True, null=True, default=None)
 
     def __str__(self) -> str:
         return f"{self.body[:32]}"
+
+    def get_likes_count(self):
+        return self.likes.count()
+
+    def get_replies_count(self):
+        return self.replies.count()
+
+
+class TweetLike(models.Model):
+    created = models.DateTimeField(auto_now=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    tweet = models.ForeignKey(Tweet, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = (("user", "tweet"),)

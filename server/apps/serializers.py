@@ -8,6 +8,7 @@ from rest_framework_simplejwt.serializers import (
 from .models import Tweet
 from .models import User
 from .models import UserFollow
+from .models import TweetLike
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -78,14 +79,39 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class TweetSerializer(serializers.ModelSerializer):
+    current_user_like_id = serializers.SerializerMethodField()
+    likes_count = serializers.ReadOnlyField(source="get_likes_count")
+    replies_count = serializers.ReadOnlyField(source="get_replies_count")
     user = UserSerializer(read_only=True)
+
+    def get_current_user_like_id(self, obj):
+        request = self.context.get("request")
+        if not request or not request.user or not request.user.is_authenticated:
+            return 0
+        like_obj = TweetLike.objects.filter(user=request.user, tweet=obj).first()
+        return like_obj.id if like_obj else 0
 
     class Meta:
         model = Tweet
-        fields = ["id", "created", "body", "user"]
+        fields = [
+            "id",
+            "created",
+            "body",
+            "likes_count",
+            "replies_count",
+            "current_user_like_id",
+            "user",
+            "parent",
+        ]
 
 
 class UserFollowSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserFollow
         fields = ["id", "user", "follows"]
+
+
+class TweetLikeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TweetLike
+        fields = ["id", "created", "user", "tweet"]

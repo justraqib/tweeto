@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
 from .models import Tweet
+from .models import TweetLike
 from .models import User
 from .models import UserFollow
 
@@ -51,9 +52,14 @@ class CustomUserAdmin(UserAdmin):
 
 
 class TweetAdmin(admin.ModelAdmin):
-    list_display = ["__str__", "body", "user", "created"]
+    list_display = ["__str__", "body", "user", "created", "get_likes_count"]
+
+
+class TweetLikeAdmin(admin.ModelAdmin):
+    list_display = ["user", "tweet", "created"]
 
 
 admin.site.register(Tweet, TweetAdmin)
+admin.site.register(TweetLike, TweetLikeAdmin)
 admin.site.register(User, CustomUserAdmin)
 admin.site.register(UserFollow)
