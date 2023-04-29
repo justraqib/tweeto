@@ -1,16 +1,8 @@
-import { useEffect, useState } from 'react';
 import Head from 'next/head'
+import { useAuth } from '../utils/auth';
 
 export default function Home() {
-  const [name, setName] = useState("");
-
-  useEffect(() => {
-    fetch('http://0.0.0.0:8000/test/')
-      .then((res) => res.json())
-      .then((data) => {
-        setName(data["name"]);
-      })
-  }, []);
+  const { loading, user } = useAuth();
 
   return (
     <>
@@ -20,7 +12,16 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main>Testing {name}</main>
+      <main>
+        {
+          !loading &&
+          (user ?
+            `Hello ${user.name} (${user.username})`
+            :
+            `I don't know you. Please login :(`
+          )
+        }
+      </main>
     </>
   )
 }

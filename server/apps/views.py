@@ -1,9 +1,9 @@
 import datetime
 from django.conf import settings
-from django.http import JsonResponse
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework import status
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenBlacklistView
 
 from .serializers import MyTokenObtainPairSerializer, MyTokenRefreshSerializer
@@ -44,18 +44,17 @@ class MyTokenBlacklistView(TokenBlacklistView):
         return response
 
 
-def test_view(request):
-    data = {
-        "id": 5,
-        "name": "John Doe",
-    }
-    response = JsonResponse(data)
-    return response
-
-
 @api_view(['GET'])
 def current_user_details(request):
     user = request.user
     if user.is_authenticated:
-        return Response({"username": user.username})
-    return Response({"error": "Unauthenticated!"})
+        return Response({
+            "id": user.id,
+            "username": user.username,
+            "name": user.get_full_name(),
+            "email": user.email,
+        })
+    return Response(
+        {"error": "Unauthenticated!"},
+        status=status.HTTP_401_UNAUTHORIZED
+    )

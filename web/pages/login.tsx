@@ -1,10 +1,12 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Head from 'next/head'
 import Router from 'next/router';
+import { useAuth } from '../utils/auth';
 
-export default function Home() {
+export default function Login() {
     const [username, setUsername] = useState();
     const [password, setPassword] = useState();
+    const { login, user } = useAuth();
 
     const handleUsernameInput = (e) => {
         setUsername(e.target.value);
@@ -14,26 +16,20 @@ export default function Home() {
         setPassword(e.target.value);
     }
 
-    const handleLoginBtnClick = (e) => {
+    const handleLoginBtnClick = async (e) => {
         e.preventDefault();
+        if (!username || !password) {
+            window.alert("Please enter both username and password");
+            return;
+        }
+        if (!login) return;
 
-        fetch('http://0.0.0.0:8000/api/token/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                'username': username,
-                'password': password,
-            })
-        })
-            .then((res) => res.json())
-            .then((data) => {
-                document.cookie = `access=${data.access}`;
-                document.cookie = `refresh=${data.refresh}`;
-
-                Router.push("/profile");
-            })
+        const resp = await login(username, password);
+        if (resp.ok) {
+            Router.push("/");
+        } else {
+            // TODO: handle login errors
+        }
     }
 
     return (
@@ -44,13 +40,15 @@ export default function Home() {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
 
+            {user && <h1>Hello {user.name} ({user.username})</h1>}
+
             <form method="POST">
                 <label htmlFor="username">Username</label>
                 <input type="text" id="username" name="username" onChange={handleUsernameInput} />
                 <br />
 
                 <label htmlFor="password">Password</label>
-                <input type="text" id="password" name="password" onChange={handlePasswordInput} />
+                <input type="password" id="password" name="password" onChange={handlePasswordInput} />
                 <br />
 
                 <button type='submit' onClick={handleLoginBtnClick}>Login</button>
