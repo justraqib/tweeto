@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
+import { API_BASE } from '../utils/config';
 import Head from 'next/head'
 import FormInput from '../components/form_input';
 import { useAuth } from '../utils/auth';
 import Router from 'next/router';
 
 interface IFormData {
+    first_name?: string,
+    last_name?: string,
+    email?: string,
     username?: string,
     password?: string,
 }
@@ -24,21 +28,31 @@ export default function Register() {
         setFormData({ ...formData, [name]: value });
     }
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        setLoading(true);
-        e.preventDefault();
+    const initLogin = async () => {
+        const {username, password} = formData;
 
-        const { username, password } = formData;
         if (!username || !password || !login) {
             return;
         }
 
         const resp = await login(username, password);
+        if (resp.ok) Router.push("/");
+    }
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        setLoading(true);
+        e.preventDefault();
+
+        const resp = await fetch(`${API_BASE}/users/`, {
+            method: 'POST',
+            body: JSON.stringify(formData),
+            headers: { "Content-Type": 'application/json' },
+        });
         setLoading(false);
 
         if (resp.ok) {
-            Router.push("/");
-        } else {
+            initLogin();
+        } else if (resp.status == 400) {
             const errors = await resp.json();
             setFormErrors(errors);
         }
@@ -55,12 +69,18 @@ export default function Register() {
     return (
         <>
             <Head>
-                <title>Login</title>
+                <title>Register</title>
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
 
             <form method="POST" onSubmit={handleSubmit}>
+                <FormInput label="First Name" name="first_name" onChange={updateFormData} errorMessage={getErrorMessage('first_name')} />
+
+                <FormInput label="Last Name" name="last_name" onChange={updateFormData} errorMessage={getErrorMessage('last_name')} />
+
+                <FormInput label="Email" name="email" type="email" required={true} onChange={updateFormData} errorMessage={getErrorMessage('email')} />
+
                 <FormInput label="Username" name="username" required={true} onChange={updateFormData} errorMessage={getErrorMessage('username')} />
 
                 <FormInput label="Password" name="password" type="password" required={true} onChange={updateFormData} errorMessage={getErrorMessage('password')} />
@@ -69,7 +89,7 @@ export default function Register() {
                     {getErrorMessage('detail')}
                 </div>
 
-                <button type='submit' disabled={loading}>Login</button>
+                <button type='submit' disabled={loading}>Register</button>
             </form>
         </>
     )
