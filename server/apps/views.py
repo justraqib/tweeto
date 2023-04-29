@@ -78,7 +78,9 @@ class UserViewSet(
         return Response(serializer.data)
 
 
-class UserFollowViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
+class UserFollowViewSet(
+    mixins.CreateModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet
+):
     queryset = UserFollow.objects.all()
     serializer_class = UserFollowSerializer
     permission_classes = [permissions.IsAuthenticated]

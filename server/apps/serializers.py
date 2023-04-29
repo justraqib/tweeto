@@ -39,6 +39,14 @@ class UserSerializer(serializers.ModelSerializer):
     name = serializers.ReadOnlyField(source="get_full_name")
     followers_count = serializers.ReadOnlyField(source="get_followers_count")
     following_count = serializers.ReadOnlyField(source="get_following_count")
+    current_user_follow_id = serializers.SerializerMethodField()
+
+    def get_current_user_follow_id(self, obj):
+        request = self.context.get("request")
+        if not request or not request.user or not request.user.is_authenticated:
+            return 0
+        follow_obj = UserFollow.objects.filter(user=request.user, follows=obj).first()
+        return follow_obj.id if follow_obj else 0
 
     class Meta:
         model = User
@@ -56,6 +64,7 @@ class UserSerializer(serializers.ModelSerializer):
             "password",
             "followers_count",
             "following_count",
+            "current_user_follow_id",
         ]
         extra_kwargs = {
             "first_name": {"write_only": True},

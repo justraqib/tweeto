@@ -10,6 +10,9 @@ export interface User {
     about: string;
     location: string;
     date_joined: string;
+    following_count: number,
+    followers_count: number,
+    current_user_follow_id: number,
 }
 
 type AuthContextProps = {
