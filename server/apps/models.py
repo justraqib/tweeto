@@ -41,7 +41,7 @@ class UserFollow(models.Model):
     )
 
     def __str__(self) -> str:
-        return f"<{self.__class__.__name__}: {self.user} follows {self.follows}>"
+        return f"{self.user} follows {self.follows}"
 
     class Meta:
         unique_together = (("user", "follows"),)
@@ -53,4 +53,4 @@ class Tweet(models.Model):
     user = models.ForeignKey(User, related_name="tweets", on_delete=models.CASCADE)
 
     def __str__(self) -> str:
-        return f"<{self.__class__.__name__}: {self.id}>"
+        return f"{self.body[:32]}"

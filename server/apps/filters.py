@@ -7,4 +7,4 @@ class TweetFilter(filters.FilterSet):
 
     class Meta:
         model = Tweet
-        fields = ["user__username"]
+        fields = ["user__username", "user__followed_by__user__username"]
