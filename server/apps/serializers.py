@@ -58,6 +58,7 @@ class UserSerializer(serializers.ModelSerializer):
             "email",
             "about",
             "location",
+            "timezone",
             "avatar_url",
             "date_joined",
             "username",

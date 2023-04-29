@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { getApiBase } from '../utils/utils';
 import FormInput from '../components/form_input';
 import { useAuth } from '../contexts/auth';
 import Router from 'next/router';
 import MyHead from '../components/head';
+import dayjs from 'dayjs';
 
 interface IFormData {
     first_name?: string,
@@ -11,6 +12,7 @@ interface IFormData {
     email?: string,
     username?: string,
     password?: string,
+    timezone?: string,
 }
 
 interface IFormErrors {
@@ -23,13 +25,20 @@ export default function Register() {
     const [formData, setFormData] = useState<IFormData>({});
     const [formErrors, setFormErrors] = useState<IFormErrors>({});
 
+    useEffect(() => {
+        setFormData({
+            ...formData,
+            timezone: dayjs.tz.guess()
+        });
+    }, [])
+
     const updateFormData = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     }
 
     const initLogin = async () => {
-        const {username, password} = formData;
+        const { username, password } = formData;
 
         if (!username || !password || !login) {
             return;
@@ -68,7 +77,7 @@ export default function Register() {
 
     return (
         <>
-            <MyHead title='Register'/>
+            <MyHead title='Register' />
 
             <form method="POST" onSubmit={handleSubmit}>
                 <FormInput label="First Name" name="first_name" onChange={updateFormData} errorMessage={getErrorMessage('first_name')} />

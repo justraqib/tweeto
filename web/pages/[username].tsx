@@ -6,6 +6,7 @@ import { User, useAuth } from "../contexts/auth";
 import { getApiBase } from "../utils/utils";
 import { GetServerSideProps } from "next";
 import { useState } from "react";
+import dayjs from "dayjs";
 
 interface IUserProfileProps {
     userData: User
@@ -50,11 +51,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 export default function UserProfile({ userData }: IUserProfileProps) {
     const [currentUserFollowId, setCurrentUserFollowId] = useState(userData.current_user_follow_id);
     const { getToken, user } = useAuth();
-
-    const getMonthYear = (date: string): string => {
-        const d = new Date(date);
-        return d.toLocaleDateString('en-US', { year: "numeric", month: "long" });;
-    }
 
     const handleFollowClick = async () => {
         if (!getToken) {
@@ -113,7 +109,7 @@ export default function UserProfile({ userData }: IUserProfileProps) {
                                 </span>
                                 <span className="flex items-center gap-1">
                                     <CalendarDaysIcon className="h-5 w-5" />
-                                    {/* <span>Joined {getMonthYear(userData.date_joined)}</span> */}
+                                    <span>Joined { dayjs(userData.date_joined).tz(user?.timezone || 'UTC').format('MMMM YYYY') }</span>
                                 </span>
                             </div>
                             <div className="flex gap-3 mt-4">

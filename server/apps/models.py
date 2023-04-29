@@ -1,11 +1,16 @@
-from django.db import models
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser
+from django.db import models
+from .constants import TIMEZONES
 
 
 class User(AbstractUser):
     about = models.CharField(max_length=128, default="", blank=True)
     avatar_url = models.URLField(blank=True, null=True)
     location = models.CharField(max_length=128, default="", blank=True)
+    timezone = models.CharField(
+        max_length=64, choices=TIMEZONES, default=settings.TIME_ZONE
+    )
     following = models.ManyToManyField(
         "self",
         through="UserFollow",

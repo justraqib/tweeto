@@ -9,6 +9,7 @@ export interface User {
     avatar_url: string | null;
     about: string;
     location: string;
+    timezone: string,
     date_joined: string;
     following_count: number,
     followers_count: number,

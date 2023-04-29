@@ -20,6 +20,7 @@ class CustomUserAdmin(UserAdmin):
                     "email",
                     "about",
                     "location",
+                    "timezone",
                     "avatar_url",
                 )
             },
