@@ -9,7 +9,6 @@ def test_view(request):
         "name": "John Doe",
     }
     response = JsonResponse(data)
-    response["Access-Control-Allow-Origin"] = "http://0.0.0.0:3000"
     return response
 
 
