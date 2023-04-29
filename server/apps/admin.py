@@ -3,10 +3,7 @@ from django.contrib.auth.admin import UserAdmin
 
 from .models import Tweet
 from .models import User
-
-
-class TweetAdmin(admin.ModelAdmin):
-    list_display = ["__str__", "body", "user", "created"]
+from .models import UserFollows
 
 
 class CustomUserAdmin(UserAdmin):
@@ -14,7 +11,19 @@ class CustomUserAdmin(UserAdmin):
     list_display = ["__str__", "email", "username", "date_joined"]
     fieldsets = (
         (None, {"fields": ("username", "password")}),
-        ("Personal info", {"fields": ("first_name", "last_name", "email", "about", "location", "avatar_url")}),
+        (
+            "Personal info",
+            {
+                "fields": (
+                    "first_name",
+                    "last_name",
+                    "email",
+                    "about",
+                    "location",
+                    "avatar_url",
+                )
+            },
+        ),
         (
             "Permissions",
             {
@@ -40,5 +49,10 @@ class CustomUserAdmin(UserAdmin):
     )
 
 
+class TweetAdmin(admin.ModelAdmin):
+    list_display = ["__str__", "body", "user", "created"]
+
+
 admin.site.register(Tweet, TweetAdmin)
 admin.site.register(User, CustomUserAdmin)
+admin.site.register(UserFollows)
