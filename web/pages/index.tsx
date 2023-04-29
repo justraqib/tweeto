@@ -4,6 +4,7 @@ import MyHead from '../components/head';
 import Nav from '../components/nav';
 import NewTweetForm from '../components/new_tweet_form';
 import TweetTemplate, { Tweet } from '../components/tweet_template';
+import { useAuth } from '../contexts/auth';
 import { URL } from '../utils/constants';
 import { getApiBase } from '../utils/utils';
 
@@ -34,7 +35,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return {
       props: {
         user: userData,
-        tweetsList: await resp.json(),
+        tweetsData: await resp.json(),
       },
     }
   }
@@ -42,14 +43,37 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 }
 
 interface IHomeProps {
-  tweetsList: Array<Tweet>
+  tweetsData: {
+    count: number
+    previous: string | null
+    next: string | null
+    results: Array<Tweet>
+  }
 }
 
-export default function Home({ tweetsList }: IHomeProps) {
-  const [allTweetsList, setAllTweetsList] = useState(tweetsList);
+export default function Home({ tweetsData }: IHomeProps) {
+  const [allTweetsList, setAllTweetsList] = useState(tweetsData.results);
+  const [nextUrl, setNextUrl] = useState(tweetsData.next)
+  const { getToken } = useAuth();
 
   const handleNewTweet = (tweet: Tweet) => {
     setAllTweetsList([tweet, ...allTweetsList]);
+  }
+
+  const handleLoadMore = async () => {
+    if (!nextUrl) return;
+    const nextPath = nextUrl.split("/api/")[1];
+    const nextUrlFinal = `${getApiBase()}/${nextPath}`;
+    const options = getToken ? { headers: { "Authorization": `Bearer ${await getToken()}` } } : {};
+    console.log(options)
+    const resp = await fetch(nextUrlFinal, options);
+    if (resp.ok) {
+      const respData = await resp.json();
+      setNextUrl(respData.next);
+      setAllTweetsList([...allTweetsList, ...respData.results]);
+    } else {
+      console.error("Unable to fetch more tweets!");
+    }
   }
 
   return (
@@ -63,6 +87,7 @@ export default function Home({ tweetsList }: IHomeProps) {
         </div>
         <div className="w-full md:w-2/3 flex flex-col gap-4">
           {allTweetsList.map(tweet => <TweetTemplate key={tweet.id} data={tweet} />)}
+          { nextUrl && <button className='bg-blue-400 px-2 py-4' onClick={handleLoadMore}>Load more</button> }
         </div>
       </main>
     </>
