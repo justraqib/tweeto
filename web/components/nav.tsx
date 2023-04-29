@@ -1,5 +1,5 @@
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useAuth } from '../utils/auth';
 
 const navigation = [
@@ -12,14 +12,26 @@ const navigation = [
 
 export default function Nav() {
     const { logout } = useAuth();
+    const userMenuRef = useRef<HTMLDivElement>(null);
     const [isMainMenuOpen, setIsMainMenuOpen] = useState(false);
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
-    const initLogout = (e) => {
-        e.preventDefault();
-        if (!logout) return;
+    const documentClickHandler = (e: any) => {
+        if (userMenuRef.current && !userMenuRef.current.contains(e.target)) {
+            setIsUserMenuOpen(false);
+        }
+    }
 
-        logout();
+    useEffect(() => {
+        document.addEventListener("click", documentClickHandler);
+        return () => {
+            document.removeEventListener('click', documentClickHandler, false);
+        }
+    }, []);
+
+    const initLogout = (e: React.MouseEvent<HTMLElement>) => {
+        e.preventDefault();
+        if (logout) logout();
     };
 
     return (
@@ -68,7 +80,7 @@ export default function Nav() {
                             <span className="sr-only">View notifications</span>
                             <BellIcon className="h-6 w-6" aria-hidden="true" />
                         </button>
-                        <div className='relative ml-3'>
+                        <div ref={userMenuRef} className='relative ml-3'>
                             <button className="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}>
                                 <span className="sr-only">Open user menu</span>
                                 <img
