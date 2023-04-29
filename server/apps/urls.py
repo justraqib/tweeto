@@ -16,18 +16,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include
 from django.urls import path
-from .views import current_user_details, test_view
-
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-)
+from .views import current_user_details, test_view, MyTokenObtainPairView, MyTokenRefreshView, MyTokenBlacklistView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', MyTokenRefreshView.as_view(), name='token_refresh'),
+    path('api/token/blacklist/', MyTokenBlacklistView.as_view(), name='token_blacklist'),
     path('users/me/', current_user_details),
     path('test/', test_view),
 ]

@@ -39,6 +39,7 @@ next-env.d.ts
 *.sqlite3
 __pycache__
 static/
+.python-version
 
 # Others
 .data/
