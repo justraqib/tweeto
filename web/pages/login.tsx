@@ -57,7 +57,7 @@ export default function Register() {
             <Head>
                 <title>Login</title>
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
-                <link rel="icon" href="/favicon.ico" />
+                <link rel="icon" href="/favicon.svg" />
             </Head>
 
             <form method="POST" onSubmit={handleSubmit}>
