@@ -57,7 +57,7 @@ export default function LoginForm() {
         <div className="relative flex flex-col justify-center min-h-screen overflow-hidden">
             <div className="flex justify-center flex-col w-3/4 p-6 m-auto bg-white border-t border-purple-600 rounded shadow-lg shadow-purple-800/50 lg:max-w-md">
                 <img className="w-16 h-16 m-auto" src="/logo.svg" alt="" />
-                <h1 className="text-xl my-5 font-bold text-gray-900">Sign in to Your account</h1>
+                <h1 className="text-xl my-5 font-bold text-gray-900 text-center mt-2">Sign in to your account</h1>
                 <form method="POST" onSubmit={handleSubmit}>
                     <FormInput label="Username" name="username" required={true} onChange={updateFormData} errorMessage={getErrorMessage('username')} />
                     <FormInput label="Password" name="password" type="password" required={true} onChange={updateFormData} errorMessage={getErrorMessage('password')} />
