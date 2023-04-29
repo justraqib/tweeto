@@ -60,6 +60,8 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'apps.urls'
 
+AUTH_USER_MODEL = 'apps.User'
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',

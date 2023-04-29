@@ -11,6 +11,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.views import TokenRefreshView
 
 from .models import Tweet
+from .models import User
 from .serializers import MyTokenObtainPairSerializer
 from .serializers import MyTokenRefreshSerializer
 from .serializers import TweetSerializer
@@ -61,8 +62,10 @@ class TweetViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         serializer.save(user=self.request.user)
 
 
-class UserViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
+class UserViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    queryset = User.objects.all()
     serializer_class = UserSerializer
+    lookup_field = 'username'
 
     @action(detail=False, permission_classes=[permissions.IsAuthenticated])
     def me(self, request, *args, **kwargs):

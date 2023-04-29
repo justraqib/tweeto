@@ -1,11 +1,15 @@
 import React, { useContext, useEffect, useState } from "react";
 import { API_BASE } from "./config";
 
-interface User {
+export interface User {
     id: number;
     email: string;
     name: string;
     username: string;
+    avatar_url: string | null;
+    about: string;
+    location: string;
+    date_joined: string;
 }
 
 type AuthContextProps = {

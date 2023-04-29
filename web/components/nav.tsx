@@ -2,6 +2,7 @@ import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link';
 import React, { useEffect, useRef, useState } from 'react'
 import { useAuth } from '../utils/auth';
+import Avatar from './avatar';
 
 const navigation = [
     { name: 'Home', href: '#', current: true },
@@ -87,15 +88,11 @@ export default function Nav() {
                             <div ref={userMenuRef} className='relative ml-3'>
                                 <button className="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}>
                                     <span className="sr-only">Open user menu</span>
-                                    <img
-                                        className="h-8 w-8 rounded-full"
-                                        src={`https://ui-avatars.com/api/?background=random&name=${user.username}`}
-                                        alt="avatar"
-                                    />
+                                    <Avatar className="h-8 w-8 rounded-full" user={user} />
                                 </button>
                                 {isUserMenuOpen &&
                                     <div className="absolute right-0 top-full z-10 mt-2 w-48 rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button">
-                                        <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Your Profile</a>
+                                        <Link href={`/${user.username}`} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Your Profile</Link>
                                         <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Settings</a>
                                         <a href="#" onClick={initLogout} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Sign out</a>
                                     </div>

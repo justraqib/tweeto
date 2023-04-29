@@ -1,9 +1,9 @@
-from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
 
 from .models import Tweet
+from .models import User
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -36,7 +36,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'first_name', 'last_name', 'name', 'email', 'username', 'password']
+        fields = ['id', 'first_name', 'last_name', 'name', 'email', 'about', 'location', 'avatar_url', 'date_joined', 'username', 'password']
         extra_kwargs = {
             'first_name': {'write_only': True},
             'last_name': {'write_only': True},
