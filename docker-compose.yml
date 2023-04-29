@@ -1,0 +1,38 @@
+version: "3"
+
+services:
+  db:
+    container_name: db
+    image: postgres
+    volumes:
+      - .data/postgresql:/var/lib/postgresql/data
+    env_file:
+      - .env.dev
+
+  server:
+    container_name: server
+    build:
+      context: ./server
+    stdin_open: true
+    tty: true
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./server:/src
+    env_file:
+      - .env.dev
+    depends_on:
+      - db
+
+  web:
+    container_name: web
+    build: ./web
+    stdin_open: true
+    tty: true
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./web:/src
+    depends_on:
+      - server
+      - db
