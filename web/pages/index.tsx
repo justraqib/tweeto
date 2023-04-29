@@ -1,5 +1,6 @@
 import Head from 'next/head'
 import Nav from '../components/nav';
+import NewTweetForm from '../components/new_tweet_form';
 import { useAuth } from '../utils/auth';
 
 export default function Home() {
@@ -18,7 +19,9 @@ export default function Home() {
         {
           !loading &&
           (user ?
-            `Hello ${user.name} (${user.username})`
+            <div className='p-4'>
+              <NewTweetForm />
+            </div>
             :
             `I don't know you. Please login :(`
           )
